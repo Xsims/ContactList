@@ -76,6 +76,7 @@ dependencies {
 
   // Utils
   implementation "com.jakewharton.timber:timber:$timber"
+  implementation "com.google.code.gson:gson:$gson_version"
 
   // Test
   testImplementation "junit:junit:$junit"

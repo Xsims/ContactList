@@ -24,6 +24,7 @@ buildscript {
 
     // Utils
     timber = '5.0.1'
+    gson_version = '2.9.0'
 
     // Test
     androidx_junit = '1.1.3'
