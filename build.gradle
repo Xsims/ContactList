@@ -1,5 +1,9 @@
 buildscript {
   ext {
+    // Core
+    core_ktx_version = '1.7.0'
+    startup_version = '1.1.1'
+
     // Android
     activity_compose = '1.4.0'
     androidx_lifecycle = '2.4.1'
