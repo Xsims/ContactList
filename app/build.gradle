@@ -1,6 +1,8 @@
 plugins {
   id 'com.android.application'
   id 'org.jetbrains.kotlin.android'
+  id 'kotlin-kapt'
+  id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -25,12 +27,15 @@ android {
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
     }
   }
+  lintOptions {
+    abortOnError false
+  }
   compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
+    sourceCompatibility JavaVersion.VERSION_11
+    targetCompatibility JavaVersion.VERSION_11
   }
   kotlinOptions {
-    jvmTarget = '1.8'
+    jvmTarget = "11"
   }
   buildFeatures {
     compose true
@@ -47,15 +52,30 @@ android {
 
 dependencies {
 
+  // Architecture components
   implementation 'androidx.core:core-ktx:1.7.0'
+  implementation "androidx.lifecycle:lifecycle-runtime-ktx:$androidx_lifecycle"
+
+  // Compose
   implementation "androidx.compose.ui:ui:$compose_version"
   implementation "androidx.compose.material:material:$compose_version"
   implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
-  implementation "androidx.lifecycle:lifecycle-runtime-ktx:$androidx_lifecycle"
   implementation "androidx.activity:activity-compose:$activity_compose"
+  implementation "androidx.compose.ui:ui-tooling:$compose_version"
+
+  // DI
+  implementation "com.google.dagger:hilt-android:$hilt_version"
+  kapt "com.google.dagger:hilt-compiler:$hilt_version"
+  implementation "androidx.hilt:hilt-navigation-compose:$hilt_compose_version"
+  androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+  kaptAndroidTest "com.google.dagger:hilt-compiler:$hilt_version"
+
+  // Utils
+  implementation "com.jakewharton.timber:timber:$timber"
+
+  // Test
   testImplementation "junit:junit:$junit"
   androidTestImplementation "androidx.test.ext:junit:$androidx_junit"
   androidTestImplementation "androidx.test.espresso:espresso-core:$espresso"
   androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
-  debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
 }
