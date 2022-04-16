@@ -51,6 +51,9 @@ android {
 }
 
 dependencies {
+  // Android
+  implementation "androidx.core:core-ktx:$core_ktx_version"
+  implementation "androidx.startup:startup-runtime:$startup_version"
 
   // Architecture components
   implementation 'androidx.core:core-ktx:1.7.0'
