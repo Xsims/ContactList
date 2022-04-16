@@ -80,7 +80,9 @@ dependencies {
 
   // Test
   testImplementation "junit:junit:$junit"
+  testImplementation "androidx.test:core:$androidx_test"
   androidTestImplementation "androidx.test.ext:junit:$androidx_junit"
   androidTestImplementation "androidx.test.espresso:espresso-core:$espresso"
   androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
+  testImplementation "org.robolectric:robolectric:$robolectric"
 }
