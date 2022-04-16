@@ -9,6 +9,9 @@ buildscript {
     androidx_lifecycle = '2.4.1'
     compose_version = '1.1.1'
 
+    // Database
+    room_version = '2.4.2'
+
     // DI
     hilt_version = '2.40.5'
     hilt_compose_version = '1.0.0'
