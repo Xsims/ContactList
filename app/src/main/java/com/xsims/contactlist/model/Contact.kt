@@ -2,6 +2,7 @@ package com.xsims.contactlist.model
 
 import androidx.compose.runtime.Immutable
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 @Entity
@@ -23,21 +24,27 @@ data class Contact (
   val picture: Picture,
 ) {
 
+  @Ignore
+  val fullNameWithTitle = name.title + ". " + name.first + " " + name.last
+
   @Entity
   @Immutable
-  data class Name (
-    @PrimaryKey(autoGenerate = false)
-    val userId: Long,
-    val title: String,
-    val first: String,
-    val last: String
-  )
+  class Name (
+    title: String,
+    first: String,
+    last: String
+  ) {
+    val title: String = title
+      get() = field.replaceFirstChar(Char::titlecase)
+    val first: String = first
+      get() = field.replaceFirstChar(Char::titlecase)
+    val last: String = last
+      get() = field.uppercase()
+  }
 
   @Entity
   @Immutable
   data class Location (
-    @PrimaryKey(autoGenerate = false)
-    val userId: Long,
     val street: String,
     val city: String,
     val state: String,
@@ -47,8 +54,6 @@ data class Contact (
   @Entity
   @Immutable
   data class Login (
-    @PrimaryKey(autoGenerate = false)
-    val userId: Long,
     val username: String,
     val password: String,
     val salt: String,
@@ -60,8 +65,6 @@ data class Contact (
   @Entity
   @Immutable
   data class ID (
-    @PrimaryKey(autoGenerate = false)
-    val userId: Long,
     val name: String,
     val value: String
   )
@@ -69,8 +72,6 @@ data class Contact (
   @Entity
   @Immutable
   data class Picture (
-    @PrimaryKey(autoGenerate = false)
-    val userId: Long,
     val large: String,
     val medium: String,
     val thumbnail: String
