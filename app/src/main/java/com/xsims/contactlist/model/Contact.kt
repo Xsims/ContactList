@@ -51,7 +51,7 @@ data class Contact (
     val street: String,
     val city: String,
     val state: String,
-    val postcode: Long
+    val postcode: String
   )
 
   @Entity
