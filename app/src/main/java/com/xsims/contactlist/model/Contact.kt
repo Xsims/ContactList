@@ -40,6 +40,10 @@ data class Contact (
       get() = field.replaceFirstChar(Char::titlecase)
     val last: String = last
       get() = field.uppercase()
+
+    override fun toString(): String {
+      return "Name(title=$title, first=$first, last=$last)"
+    }
   }
 
   @Entity
