@@ -7,7 +7,8 @@ import com.skydoves.sandwich.suspendOnException
 import com.skydoves.sandwich.suspendOnSuccess
 import com.xsims.contactlist.api.ContactService
 import com.xsims.contactlist.db.ContactDao
-import com.xsims.contactlist.ui.main.MainViewModel.ContactListUiState
+import com.xsims.contactlist.model.Contact
+import com.xsims.contactlist.utils.UiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
@@ -26,40 +27,31 @@ class MainRepository @Inject constructor(
     Timber.d("Injection MainRepository")
   }
 
-  private suspend inline fun FlowCollector<ContactListUiState>.getContactListFromDatabaseOrEmitError(
-    message: String,
+  private suspend inline fun FlowCollector<UiState<out List<Contact>>>.emitContactsFromDatabaseOrEmit(
+    contactListUiState: UiState<out List<Contact>>,
   ) {
     val contactList = contactDao.getContactList()
     this.emit(
-      if (contactList.isEmpty()) ContactListUiState.Error(message)
-      else ContactListUiState.Success(contactList)
-    )
-  }
-
-  private suspend inline fun FlowCollector<ContactListUiState>.getContactListFromDatabaseOrEmitEmpty() {
-    val contactList = contactDao.getContactList()
-    this.emit(
-      if (contactList.isEmpty()) ContactListUiState.Empty
-      else ContactListUiState.Success(contactList)
-    )
+      if (contactList.isEmpty()) contactListUiState
+      else UiState.Success(contactList))
   }
 
   @WorkerThread
-  fun getContacts(): Flow<ContactListUiState> = flow {
+  fun getContacts(): Flow<UiState<out List<Contact>>> = flow {
     contactService.fetchContactList()
       .suspendOnSuccess {
         if (data.results.isEmpty()) {
-          getContactListFromDatabaseOrEmitEmpty()
+          emitContactsFromDatabaseOrEmit(UiState.Empty)
         } else {
           contactDao.insertContactList(data.results)
-          emit(ContactListUiState.Success(data.results))
+          emit(UiState.Success(data.results))
         }
       }
       .suspendOnError {
-        getContactListFromDatabaseOrEmitError(message())
+        emitContactsFromDatabaseOrEmit(UiState.Error(message()))
       }
       .suspendOnException {
-        getContactListFromDatabaseOrEmitError(message())
+        emitContactsFromDatabaseOrEmit(UiState.Error(message()))
       }
-  }.onStart { ContactListUiState.Loading }.flowOn(Dispatchers.IO)
+  }.onStart { UiState.Loading }.flowOn(Dispatchers.IO)
 }

@@ -11,19 +11,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.xsims.contactlist.model.Contact
-import com.xsims.contactlist.ui.main.MainViewModel.ContactListUiState
+import com.xsims.contactlist.ui.composable.UiStateView
 import com.xsims.contactlist.ui.theme.ContactListTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -45,19 +42,15 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(vm: MainViewModel) {
-  val contactListUi by vm.contactListUi.collectAsState()
-  when(val data = contactListUi) {
-    is ContactListUiState.Loading -> CircularProgressIndicator()
-    is ContactListUiState.Empty -> Text("list is Empty")
-    is ContactListUiState.Error -> Text(data.error)
-    is ContactListUiState.Success -> ContactList(data.firstCharAndContacts)
+  UiStateView(uiStateData = vm.contactListUi) {
+    ContactList(vm.groupByFirstCharAndContacts(it))
   }
 }
 
 @Composable
-fun ContactList(contactList: FirstCharAndContacts){
+fun ContactList(firstCharAndContacts: FirstCharAndContacts){
   LazyColumn {
-    contactList.forEach { (initial, contactsForInitial) ->
+    firstCharAndContacts.forEach { (initial, contactsForInitial) ->
       stickyHeader {
         CharacterHeader(initial)
       }

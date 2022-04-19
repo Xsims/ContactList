@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xsims.contactlist.model.Contact
-import com.xsims.contactlist.ui.main.MainViewModel.ContactListUiState.Loading
+import com.xsims.contactlist.utils.UiState.Loading
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -24,13 +24,6 @@ class MainViewModel @Inject constructor(
       .stateIn(viewModelScope, SharingStarted.Lazily, Loading)
   )
 
-  sealed class ContactListUiState {
-    object Loading : ContactListUiState()
-    object Empty : ContactListUiState()
-    class Error(val error: String) : ContactListUiState()
-    class Success(private val data: List<Contact>) : ContactListUiState() {
-      val firstCharAndContacts: Map<Char, List<Contact>>
-        get() = data.sortedBy { it.name.first }.groupBy { it.name.first[0] }
-    }
-  }
+  fun groupByFirstCharAndContacts(contacts: List<Contact>) =
+    contacts.sortedBy { it.name.first }.groupBy { it.name.first[0] }
 }

@@ -2,7 +2,6 @@ package com.xsims.contactlist.model
 
 import androidx.compose.runtime.Immutable
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 @Entity
@@ -24,8 +23,8 @@ data class Contact (
   val picture: Picture,
 ) {
 
-  @Ignore
-  val fullNameWithTitle = name.title + ". " + name.first + " " + name.last
+  val fullNameWithTitle : String
+   get() = name.title + ". " + name.first + " " + name.last
 
   @Entity
   @Immutable
