@@ -39,4 +39,7 @@ jobs:
       
     - name: Android Test Report
       uses: asadmansr/android-test-report-action@v1.2.0
-      if: ${{ always() }} # IMPORTANT: run Android Test Report regardless
+      if: ${{ always() }} # IMPORTANT: run Android Test Report regardles
+    
+    - name: Github actions upload code coverage
+      uses: codecov/codecov-action@v2
