@@ -1,6 +1,7 @@
 package com.xsims.contactlist.db
 
 import com.xsims.contactlist.TestUtils.mockContact
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.MatcherAssert
 import org.hamcrest.core.Is.`is`
@@ -26,7 +27,7 @@ class ContactDaoTest : TestDatabase() {
     val mockDataList = listOf(mockContact())
     contactDao.insertContactList(mockDataList)
 
-    val loadFromDB = contactDao.getContactList()
+    val loadFromDB = contactDao.getContactList().first()
     MatcherAssert.assertThat(loadFromDB.toString(), `is`(mockDataList.toString()))
 
     val mockData = mockContact()
