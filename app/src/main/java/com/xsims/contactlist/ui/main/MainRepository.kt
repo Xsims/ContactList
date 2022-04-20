@@ -2,19 +2,17 @@ package com.xsims.contactlist.ui.main
 
 import androidx.annotation.WorkerThread
 import com.skydoves.sandwich.message
-import com.skydoves.sandwich.suspendOnError
-import com.skydoves.sandwich.suspendOnException
-import com.skydoves.sandwich.suspendOnSuccess
+import com.skydoves.sandwich.onError
+import com.skydoves.sandwich.onException
+import com.skydoves.sandwich.onSuccess
 import com.xsims.contactlist.api.ContactService
 import com.xsims.contactlist.db.ContactDao
-import com.xsims.contactlist.model.Contact
 import com.xsims.contactlist.utils.UiState
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -27,31 +25,35 @@ class MainRepository @Inject constructor(
     Timber.d("Injection MainRepository")
   }
 
-  private suspend inline fun FlowCollector<UiState<out List<Contact>>>.emitContactsFromDatabaseOrEmit(
-    contactListUiState: UiState<out List<Contact>>,
-  ) {
-    val contactList = contactDao.getContactList()
-    this.emit(
-      if (contactList.isEmpty()) contactListUiState
-      else UiState.Success(contactList))
-  }
+  fun getContactList() =
+    contactDao.getContactList()
+      .map {
+        Timber.d("Get ${it.size} contacts from database")
+        if (it.isEmpty()) UiState.Empty else UiState.Success(it)
+      }
+      .catch { UiState.Error(it.message.toString()) }
 
   @WorkerThread
-  fun getContacts(): Flow<UiState<out List<Contact>>> = flow {
-    contactService.fetchContactList()
-      .suspendOnSuccess {
-        if (data.results.isEmpty()) {
-          emitContactsFromDatabaseOrEmit(UiState.Empty)
-        } else {
+  suspend fun loadContacts(
+    page: Int,
+    onError: (String) -> Unit
+  ) {
+    contactService.fetchContactList(page = page)
+      .onSuccess {
+        CoroutineScope(Dispatchers.IO).launch {
           contactDao.insertContactList(data.results)
-          emit(UiState.Success(data.results))
         }
+        Timber.d("load ${data.results.size} contacts")
       }
-      .suspendOnError {
-        emitContactsFromDatabaseOrEmit(UiState.Error(message()))
+      .onError {
+        onError(message())
       }
-      .suspendOnException {
-        emitContactsFromDatabaseOrEmit(UiState.Error(message()))
+      .onException {
+        onError(message())
       }
-  }.onStart { UiState.Loading }.flowOn(Dispatchers.IO)
+  }
+
+  suspend fun deleteAllContact() {
+    contactDao.deleteAllContact()
+  }
 }

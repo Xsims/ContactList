@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.xsims.contactlist.model.Contact
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ContactDao {
@@ -16,5 +17,8 @@ interface ContactDao {
   suspend fun getContact(email: String): Contact?
 
   @Query("SELECT * FROM Contact")
-  suspend fun getContactList(): List<Contact>
+  fun getContactList(): Flow<List<Contact>>
+
+  @Query("DELETE FROM Contact ")
+  suspend fun deleteAllContact()
 }

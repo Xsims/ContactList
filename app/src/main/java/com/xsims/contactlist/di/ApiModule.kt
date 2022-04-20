@@ -1,11 +1,15 @@
 package com.xsims.contactlist.di
 
+import android.content.Context
+import coil.ImageLoader
+import coil.disk.DiskCache
 import com.skydoves.sandwich.coroutines.CoroutinesResponseCallAdapterFactory
 import com.xsims.contactlist.api.ContactService
 import com.xsims.contactlist.api.RequestInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -21,6 +25,20 @@ object ApiModule {
   fun provideOkHttpClient(): OkHttpClient {
     return OkHttpClient.Builder()
       .addInterceptor(RequestInterceptor())
+      .build()
+  }
+
+  @Provides
+  @Singleton
+  fun provideImageLoader(
+    @ApplicationContext context: Context
+  ): ImageLoader {
+    return ImageLoader.Builder(context)
+      .diskCache {
+        DiskCache.Builder()
+          .directory(context.cacheDir.resolve("image_cache"))
+          .build()
+      }
       .build()
   }
 

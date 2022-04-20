@@ -21,7 +21,7 @@ object TestUtils {
         street = "2876 oak lawn ave",
         city = "tweed",
         state = "western australia",
-        postcode = 1748
+        postcode = "1748"
       ),
       login = Login(
         username = "bigwolf188",
