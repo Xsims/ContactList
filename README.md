@@ -16,7 +16,8 @@ Go to the [Releases](https://github.com/Xsims/ContactList/releases) to download 
 
 ## Screenshots
 <p align="center">
-Coming soon
+<img src="/screenshots/contact_list.jpg" width="45%"/>
+<img src="/screenshots/contact_details.jpg" width="45%"/>
 </p>
 
 ## Tech stack & Open-source libraries
