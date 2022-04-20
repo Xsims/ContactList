@@ -32,6 +32,9 @@ jobs:
       
     - name: Launch unit tests with gradle
       run: ./gradlew testDebugUnitTest
+          curl -Os https://uploader.codecov.io/latest/linux/codecov
+          chmod +x codecov
+          ./codecov
       
     - name: Android Test Report
       uses: asadmansr/android-test-report-action@v1.2.0
